@@ -1,0 +1,340 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-08-14",
+  "status_values": [
+    "proposed",
+    "questioning",
+    "ready",
+    "in_progress",
+    "blocked",
+    "in_review",
+    "done",
+    "deferred"
+  ],
+  "features": [
+    {
+      "id": "ai-harness-foundation",
+      "title": "AI harness foundation",
+      "status": "done",
+      "priority": "high",
+      "summary": "Give human and AI contributors a durable product contract, feature checkpoint registry, verification path, and mandatory human review gate.",
+      "scope": {
+        "in": [
+          "Repository-level agent guidance",
+          "Product and source-map context",
+          "Machine-readable feature lifecycle and checkpoints",
+          "Feature-requirements interview workflow",
+          "Non-interactive test and build verification command",
+          "Human approval before commit, push, or pull request"
+        ],
+        "out": [
+          "Application behavior changes",
+          "New product features",
+          "Expanded automated test coverage",
+          "CI/CD configuration",
+          "Create React App migration"
+        ]
+      },
+      "acceptance_criteria": [
+        "AGENTS.md explains the product, repository map, feature lifecycle, verification path, change rules, and definition of done.",
+        "feature_list.json records feature status, scope, checkpoints, evidence, verification, and human review state.",
+        "The grill-me workflow turns an ambiguous feature request into an approved, testable feature brief before implementation.",
+        "npm run verify runs tests non-interactively and creates a production build.",
+        "Agents must present changes and verification results for explicit human approval before commit, push, or pull request."
+      ],
+      "checkpoints": [
+        {
+          "id": "repository-guide",
+          "status": "done",
+          "summary": "Document the product, source map, commands, behavior contract, change rules, and definition of done.",
+          "evidence": [
+            "AGENTS.md",
+            "README.md"
+          ]
+        },
+        {
+          "id": "headless-verification",
+          "status": "done",
+          "summary": "Provide one non-interactive command for tests and production build.",
+          "evidence": [
+            "package.json#scripts.test:ci",
+            "package.json#scripts.verify",
+            "npm run verify passed on 2026-08-14"
+          ]
+        },
+        {
+          "id": "feature-registry",
+          "status": "done",
+          "summary": "Create the machine-readable feature and checkpoint registry.",
+          "evidence": [
+            "feature_list.json"
+          ]
+        },
+        {
+          "id": "feature-interview",
+          "status": "done",
+          "summary": "Create a reusable interview workflow for clarifying features before implementation.",
+          "evidence": [
+            ".agents/skills/grill_me.md"
+          ]
+        },
+        {
+          "id": "human-review-gate",
+          "status": "done",
+          "summary": "Require explicit human review after changes and before any commit, push, or pull request.",
+          "evidence": [
+            "AGENTS.md#change-rules"
+          ]
+        }
+      ],
+      "open_questions": [],
+      "risks": [
+        "Feature records can drift from the repository unless every handoff updates checkpoint evidence.",
+        "The current verification suite is a smoke test and does not yet protect all user-visible behavior."
+      ],
+      "dependencies": [],
+      "verification": {
+        "commands": [
+          "npm run verify"
+        ],
+        "last_result": "passed",
+        "last_run_at": "2026-08-14",
+        "evidence": [
+          "1 test passed",
+          "Production build compiled successfully"
+        ]
+      },
+      "human_review": {
+        "status": "approved",
+        "reviewed_by": "repository owner",
+        "reviewed_at": "2026-08-14",
+        "notes": "The complete AI harness was reviewed and approved before commit."
+      }
+    },
+    {
+      "id": "behavioral-test-baseline",
+      "title": "Behavioral test baseline",
+      "status": "done",
+      "priority": "high",
+      "summary": "Protect the current user-list contract with deterministic browser tests that never call the live DummyJSON API.",
+      "scope": {
+        "in": [
+          "Loading, successful response, request error, and empty response states",
+          "Required user-card fields",
+          "Case-insensitive full-name search after the 500 millisecond debounce",
+          "No-match search state",
+          "Mocked network responses for deterministic tests"
+        ],
+        "out": [
+          "Application behavior changes",
+          "End-to-end browser infrastructure",
+          "Live DummyJSON integration tests",
+          "Coverage threshold enforcement",
+          "CI/CD configuration"
+        ]
+      },
+      "acceptance_criteria": [
+        "Tests distinguish loading, result, request error, empty response, and no-match states.",
+        "Tests verify that a result card displays image, full name, age, email, and phone.",
+        "Tests verify that search is case-insensitive, matches the combined first and last name, and waits for the 500 millisecond debounce.",
+        "Every fetch used by the test suite is mocked and no test calls DummyJSON.",
+        "npm run verify passes."
+      ],
+      "scope_approval": {
+        "status": "approved",
+        "approved_by": "repository owner",
+        "approved_at": "2026-08-14",
+        "notes": "The repository owner explicitly approved implementation and waived the grill-me interview because this feature codifies the existing product contract in tests."
+      },
+      "checkpoints": [
+        {
+          "id": "data-states",
+          "status": "done",
+          "summary": "Cover loading, successful response, request error, and empty response states.",
+          "evidence": [
+            "src/App.test.js: loads all users and renders the complete user-card contract",
+            "src/App.test.js: shows the request error state for an unsuccessful response",
+            "src/App.test.js: shows the empty state when the API returns no users"
+          ]
+        },
+        {
+          "id": "card-contract",
+          "status": "done",
+          "summary": "Assert every required user-card field.",
+          "evidence": [
+            "src/App.test.js: loads all users and renders the complete user-card contract"
+          ]
+        },
+        {
+          "id": "search-contract",
+          "status": "done",
+          "summary": "Cover debounced, case-insensitive full-name matching and the no-match state.",
+          "evidence": [
+            "src/pages/UsersPage.test.jsx: filters by a case-insensitive full name only after the debounce",
+            "src/pages/UsersPage.test.jsx: shows the no-match state after a debounced search"
+          ]
+        },
+        {
+          "id": "deterministic-network",
+          "status": "done",
+          "summary": "Replace live network behavior with controlled fetch responses in every test.",
+          "evidence": [
+            "src/App.test.js mocks global.fetch before every App render",
+            "src/pages/UsersPage.test.jsx supplies a controlled UserContext and makes no network request"
+          ]
+        }
+      ],
+      "open_questions": [],
+      "risks": [
+        "Timer-based assertions can become flaky unless debounce time is controlled with fake timers.",
+        "Component-level browser tests do not replace a future end-to-end test against a deployed application."
+      ],
+      "dependencies": [
+        "ai-harness-foundation"
+      ],
+      "verification": {
+        "commands": [
+          "npm run test:ci",
+          "npm run test:ci -- --coverage --coverageReporters=text",
+          "npm run verify"
+        ],
+        "last_result": "passed",
+        "last_run_at": "2026-08-14",
+        "evidence": [
+          "2 test suites and 5 tests passed",
+          "Behavioral source files have 100% statement and line coverage",
+          "Overall coverage: 82.81% statements, 77.77% branches, 88.23% functions, 82.53% lines",
+          "Production build compiled successfully"
+        ]
+      },
+      "human_review": {
+        "status": "approved",
+        "reviewed_by": "repository owner",
+        "reviewed_at": "2026-08-14",
+        "notes": "The behavioral test baseline and reproducible coverage evidence were reviewed and approved before commit."
+      }
+    },
+    {
+      "id": "github-ci-gate",
+      "title": "GitHub CI/CD and Pages deployment",
+      "status": "in_review",
+      "priority": "critical",
+      "summary": "Run reproducible lint, test, and production-build checks for pull requests and automatically deploy successful main builds to GitHub Pages.",
+      "scope": {
+        "in": [
+          "GitHub Actions workflow for pull requests and pushes to main",
+          "Lockfile-based dependency installation",
+          "Dedicated React ESLint command",
+          "Non-interactive behavioral tests",
+          "Production build verification",
+          "Portable Create React App asset paths for a repository Pages URL",
+          "Automatic GitHub Pages deployment after a successful push to main",
+          "Documentation for required checks and the manual branch-ruleset step"
+        ],
+        "out": [
+          "Deployment to hosting providers other than GitHub Pages",
+          "Stored deployment credentials or production secrets",
+          "Self-hosted runner infrastructure",
+          "Create React App migration"
+        ]
+      },
+      "acceptance_criteria": [
+        "A pull request targeting main automatically runs lint, tests, and a production build on a GitHub-hosted runner.",
+        "A push to main runs the same verification workflow.",
+        "CI installs dependencies with npm ci and does not make live DummyJSON requests during tests.",
+        "The lint command reports React and JavaScript lint failures non-interactively.",
+        "The production build uses asset paths that work under the customer_hook GitHub Pages repository path.",
+        "A successful push to main uploads the production build and deploys it to the github-pages environment.",
+        "The workflow uses least-privilege permissions and does not expose deployment secrets to pull requests.",
+        "Repository documentation explains the CI commands, one-time Pages setup, deployment behavior, and the GitHub ruleset setting required to block merging when CI fails."
+      ],
+      "scope_approval": {
+        "status": "approved",
+        "approved_by": "repository owner",
+        "approved_at": "2026-08-14",
+        "notes": "The repository owner selected GitHub Pages and approved pull-request verification plus automatic deployment after successful pushes to main."
+      },
+      "checkpoints": [
+        {
+          "id": "lint-command",
+          "status": "done",
+          "summary": "Expose and document the ESLint configuration already supplied by Create React App.",
+          "evidence": [
+            "package.json#scripts.lint",
+            "npm run lint passed after a clean npm ci on 2026-08-14"
+          ]
+        },
+        {
+          "id": "pull-request-workflow",
+          "status": "done",
+          "summary": "Run npm ci, lint, tests, and build for pull requests and pushes to main.",
+          "evidence": [
+            ".github/workflows/ci.yml#jobs.quality",
+            "npm run verify passed after a clean npm ci on 2026-08-14",
+            "npm 10.9.4 clean install passed after repairing the missing yaml@2.9.0 lockfile entry"
+          ]
+        },
+        {
+          "id": "merge-gate-handoff",
+          "status": "done",
+          "summary": "Document how to make the successful GitHub Actions check required for merging.",
+          "evidence": [
+            "README.md#continuous-integration-and-deployment"
+          ]
+        },
+        {
+          "id": "github-pages-deployment",
+          "status": "in_review",
+          "summary": "Upload the production build and deploy it to GitHub Pages only after the main quality gate succeeds.",
+          "evidence": [
+            ".github/workflows/ci.yml#jobs.deploy",
+            "package.json#homepage",
+            "Production build generated relative asset paths under ./",
+            "Remote deployment awaits Pages enablement and the first push to main"
+          ]
+        }
+      ],
+      "open_questions": [],
+      "risks": [
+        "A workflow result does not block merging until the repository owner enables a required status check in a GitHub ruleset.",
+        "GitHub Pages must be enabled with GitHub Actions as its source before the first deployment can succeed.",
+        "Create React App supplies ESLint through react-scripts, so the lint command must stay compatible with that existing toolchain."
+      ],
+      "dependencies": [
+        "ai-harness-foundation",
+        "behavioral-test-baseline"
+      ],
+      "verification": {
+        "commands": [
+          "npm ci",
+          "npx --yes npm@10.9.4 ci",
+          "npm run lint",
+          "npm run test:ci",
+          "npm run build",
+          "npm run verify",
+          "CI=true npm run verify",
+          "ruby -e 'require \"yaml\"; YAML.load_file(\".github/workflows/ci.yml\")'",
+          "rg 'src=\"./static|href=\"./static' build/index.html"
+        ],
+        "last_result": "passed_locally",
+        "last_run_at": "2026-08-14",
+        "evidence": [
+          "npm ci completed successfully from package-lock.json",
+          "npm 10.9.4 reproduced the runner install path successfully after the lockfile repair",
+          "ESLint completed with zero warnings and errors",
+          "2 test suites and 5 tests passed",
+          "Production build compiled successfully for the ./ public path",
+          "The complete verification gate also passed with CI=true",
+          "Workflow YAML parsed successfully with quality and deploy jobs",
+          "Remote GitHub Actions and Pages execution is pending the first push"
+        ]
+      },
+      "human_review": {
+        "status": "approved",
+        "reviewed_by": "repository owner",
+        "reviewed_at": "2026-08-14",
+        "notes": "The CI/CD implementation and npm 10 lockfile repair were reviewed and approved before commit. The feature remains in_review until the remote quality gate and GitHub Pages deployment pass."
+      }
+    }
+  ]
+}

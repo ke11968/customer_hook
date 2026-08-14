@@ -1,70 +1,104 @@
-# Getting Started with Create React App
+# Customer Hook
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Customer Hook is a small React application that fetches a user list from
+[DummyJSON](https://dummyjson.com/docs/users) and filters it by first or last
+name in the browser.
 
-## Available Scripts
+The repository contains only the frontend. It does not include a backend,
+authentication, or a database. Successful builds from `main` are deployed as a
+static site to GitHub Pages.
 
-In the project directory, you can run:
+## Behavior
 
-### `npm start`
+- Users are loaded from `https://dummyjson.com/users`.
+- Search is case-insensitive and matches the combined first and last name.
+- An empty query shows every loaded user.
+- Search updates after a 500 ms debounce.
+- The page presents separate loading, request-error, empty-response,
+  no-match, and results states.
+- Each card shows a user's image, full name, age, email, and phone number.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Requirements
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- Node.js 22 (the version used by CI) and npm
 
-### `npm test`
+The dependency tree is captured in `package-lock.json`. Use `npm ci` rather
+than `npm install` for a reproducible checkout.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Setup
 
-### `npm run build`
+```sh
+npm ci
+npm start
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The development server opens the application at
+[http://localhost:3000](http://localhost:3000).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Verification
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Run the complete non-interactive local gate:
 
-### `npm run eject`
+```sh
+npm run verify
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+This runs ESLint, the test suite once, and then creates a production build.
+Individual commands are also available:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+| Command | Purpose |
+| --- | --- |
+| `npm start` | Start the development server |
+| `npm run lint` | Check JavaScript and React source files with ESLint |
+| `npm test` | Start Jest in interactive watch mode |
+| `npm run test:ci` | Run Jest once and exit |
+| `npm run build` | Create the production build in `build/` |
+| `npm run verify` | Run lint, non-interactive tests, and production build |
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Continuous integration and deployment
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+GitHub Actions runs the quality gate for every pull request targeting `main`
+and every push to `main`. The gate installs from `package-lock.json`, runs lint
+and tests, and creates the production build. Pull requests never deploy.
 
-## Learn More
+After the quality gate passes on a push to `main`, the same workflow uploads
+`build/` and deploys it to the `github-pages` environment. The `homepage` value
+in `package.json` keeps generated asset paths relative so the build works at a
+repository Pages URL and remains portable across forks.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Before the first deployment, a repository administrator must open **Settings →
+Pages** and select **GitHub Actions** as the build source. To prevent broken
+changes from being merged, add a ruleset for `main` under **Settings → Rules**
+and require the **Quality gate** status check.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+For this repository, the expected project-site URL is:
+`https://anastasiakrivova-stack.github.io/customer_hook/`.
 
-### Code Splitting
+## Architecture
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```text
+App
+└── UserProvider
+    └── UsersPage
+        └── UserCard
+```
 
-### Analyzing the Bundle Size
+- `src/context/UserContext.jsx` connects the data source to the UI.
+- `src/hooks/useFetch.js` owns request, loading, and error state.
+- `src/hooks/useDebounce.js` delays application of the search query.
+- `src/pages/UsersPage.jsx` owns filtering and page states.
+- `src/components/UserCard/UserCard.jsx` renders one user.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Current limitations
 
-### Making a Progressive Web App
+- The users API URL and debounce duration are currently code constants.
+- The application has no retry control when the users request fails.
+- Browser-level tests cover the current user-visible list, search, and state
+  behavior; end-to-end coverage is intentionally deferred.
+- Create React App remains the build tool and should be migrated separately,
+  behind passing behavior tests.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## Agent and contribution guidance
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Repository-specific setup, behavior contracts, review rules, and the definition
+of done are in [`AGENTS.md`](./AGENTS.md).
