@@ -341,6 +341,101 @@
         "reviewed_at": "2026-08-14",
         "notes": "The CI/CD implementation and npm 10 lockfile repair were reviewed before merge. The repository owner approved marking the feature done after the remote main quality gate and GitHub Pages deployment passed."
       }
+    },
+    {
+      "id": "vite-toolchain-migration",
+      "title": "Migrate from Create React App to Vite",
+      "status": "deferred",
+      "priority": "medium",
+      "size": "large",
+      "summary": "Replace the Create React App toolchain with Vite in a dedicated future change while preserving the verified user-list behavior and GitHub Pages delivery path.",
+      "scope": {
+        "in": [
+          "Replace react-scripts development and production build commands with Vite",
+          "Preserve equivalent lint and non-interactive test commands",
+          "Keep all five existing behavioral tests passing or migrate them to an equivalent supported runner",
+          "Update GitHub Actions and GitHub Pages artifact handling from build/ to dist/",
+          "Remove Create React App-only entry points, dependencies, and generated assumptions",
+          "Preserve relative asset paths for the customer_hook repository Pages URL"
+        ],
+        "out": [
+          "User-visible product behavior changes",
+          "UI redesign",
+          "Backend, authentication, or database work",
+          "New deployment targets",
+          "Unrelated feature development"
+        ]
+      },
+      "acceptance_criteria": [
+        "A clean lockfile installation supports local development, lint, tests, and a production Vite build.",
+        "The existing five behavioral tests continue to protect loading, results, errors, empty responses, search debounce, and no-match behavior.",
+        "The pull-request Quality gate passes with the migrated toolchain.",
+        "A successful push to main uploads dist/ and deploys the application to GitHub Pages.",
+        "The deployed customer_hook site loads its JavaScript, CSS, manifest, and public assets from valid repository-relative paths.",
+        "react-scripts and obsolete Create React App-only files and dependencies are removed."
+      ],
+      "checkpoints": [
+        {
+          "id": "migration-brief",
+          "status": "deferred",
+          "summary": "Confirm the Vite, test-runner, asset-path, and environment-variable migration design before implementation.",
+          "evidence": [
+            "Deferred by the repository owner on 2026-08-14 because this is a large cross-cutting toolchain change"
+          ]
+        },
+        {
+          "id": "toolchain-replacement",
+          "status": "deferred",
+          "summary": "Replace react-scripts and CRA entry points while preserving local development and production builds.",
+          "evidence": []
+        },
+        {
+          "id": "test-and-ci-parity",
+          "status": "deferred",
+          "summary": "Preserve behavioral tests and update the Quality gate for the selected Vite-compatible test setup.",
+          "evidence": []
+        },
+        {
+          "id": "pages-migration",
+          "status": "deferred",
+          "summary": "Deploy the Vite dist/ artifact to GitHub Pages without breaking repository-relative asset paths.",
+          "evidence": []
+        }
+      ],
+      "open_questions": [
+        "Whether to migrate the existing Jest tests to Vitest or preserve Jest as a separate runner.",
+        "Whether future API configuration should use a required VITE_USERS_API_URL value or a documented DummyJSON default."
+      ],
+      "risks": [
+        "The migration changes development, testing, production build, CI artifact, and deployment behavior at the same time.",
+        "Incorrect Vite base configuration can produce a successful build whose assets fail under the GitHub Pages repository path.",
+        "Changing the test runner can weaken behavioral coverage if assertions or browser-environment setup are lost during conversion.",
+        "Combining this migration with product changes would make regressions harder to isolate within the two-day assignment window."
+      ],
+      "dependencies": [
+        "behavioral-test-baseline",
+        "github-ci-gate"
+      ],
+      "deferral": {
+        "reason": "This is a large cross-cutting infrastructure change that affects local development, tests, production builds, CI, GitHub Pages artifacts, asset paths, and environment-variable conventions. It is intentionally outside the two-day assignment scope; the behavioral baseline and CI/CD pipeline now provide a safe foundation for a separate future migration.",
+        "decided_by": "repository owner",
+        "decided_at": "2026-08-14",
+        "revisit_when": "After the current repository-readiness improvements are submitted and a dedicated migration scope is approved."
+      },
+      "verification": {
+        "commands": [],
+        "last_result": "not_run_deferred",
+        "last_run_at": null,
+        "evidence": [
+          "No migration code was implemented as part of the deferral decision."
+        ]
+      },
+      "human_review": {
+        "status": "approved",
+        "reviewed_by": "repository owner",
+        "reviewed_at": "2026-08-14",
+        "notes": "The repository owner explicitly chose to defer the Vite migration because its cross-cutting scope is too large for the current assignment window."
+      }
     }
   ]
 }
