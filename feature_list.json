@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-08-14",
+  "status_values": [
+    "proposed",
+    "questioning",
+    "ready",
+    "in_progress",
+    "blocked",
+    "in_review",
+    "done",
+    "deferred"
+  ],
+  "features": [
+    {
+      "id": "ai-harness-foundation",
+      "title": "AI harness foundation",
+      "status": "done",
+      "priority": "high",
+      "summary": "Give human and AI contributors a durable product contract, feature checkpoint registry, verification path, and mandatory human review gate.",
+      "scope": {
+        "in": [
+          "Repository-level agent guidance",
+          "Product and source-map context",
+          "Machine-readable feature lifecycle and checkpoints",
+          "Feature-requirements interview workflow",
+          "Non-interactive test and build verification command",
+          "Human approval before commit, push, or pull request"
+        ],
+        "out": [
+          "Application behavior changes",
+          "New product features",
+          "Expanded automated test coverage",
+          "CI/CD configuration",
+          "Create React App migration"
+        ]
+      },
+      "acceptance_criteria": [
+        "AGENTS.md explains the product, repository map, feature lifecycle, verification path, change rules, and definition of done.",
+        "feature_list.json records feature status, scope, checkpoints, evidence, verification, and human review state.",
+        "The grill-me workflow turns an ambiguous feature request into an approved, testable feature brief before implementation.",
+        "npm run verify runs tests non-interactively and creates a production build.",
+        "Agents must present changes and verification results for explicit human approval before commit, push, or pull request."
+      ],
+      "checkpoints": [
+        {
+          "id": "repository-guide",
+          "status": "done",
+          "summary": "Document the product, source map, commands, behavior contract, change rules, and definition of done.",
+          "evidence": [
+            "AGENTS.md",
+            "README.md"
+          ]
+        },
+        {
+          "id": "headless-verification",
+          "status": "done",
+          "summary": "Provide one non-interactive command for tests and production build.",
+          "evidence": [
+            "package.json#scripts.test:ci",
+            "package.json#scripts.verify",
+            "npm run verify passed on 2026-08-14"
+          ]
+        },
+        {
+          "id": "feature-registry",
+          "status": "done",
+          "summary": "Create the machine-readable feature and checkpoint registry.",
+          "evidence": [
+            "feature_list.json"
+          ]
+        },
+        {
+          "id": "feature-interview",
+          "status": "done",
+          "summary": "Create a reusable interview workflow for clarifying features before implementation.",
+          "evidence": [
+            ".agents/skills/grill_me.md"
+          ]
+        },
+        {
+          "id": "human-review-gate",
+          "status": "done",
+          "summary": "Require explicit human review after changes and before any commit, push, or pull request.",
+          "evidence": [
+            "AGENTS.md#change-rules"
+          ]
+        }
+      ],
+      "open_questions": [],
+      "risks": [
+        "Feature records can drift from the repository unless every handoff updates checkpoint evidence.",
+        "The current verification suite is a smoke test and does not yet protect all user-visible behavior."
+      ],
+      "dependencies": [],
+      "verification": {
+        "commands": [
+          "npm run verify"
+        ],
+        "last_result": "passed",
+        "last_run_at": "2026-08-14",
+        "evidence": [
+          "1 test passed",
+          "Production build compiled successfully"
+        ]
+      },
+      "human_review": {
+        "status": "approved",
+        "reviewed_by": "repository owner",
+        "reviewed_at": "2026-08-14",
+        "notes": "The complete AI harness was reviewed and approved before commit."
+      }
+    }
+  ]
+}
