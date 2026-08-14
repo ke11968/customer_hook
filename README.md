@@ -20,10 +20,11 @@ static site to GitHub Pages.
 
 ## Requirements
 
-- Node.js 22 (the version used by CI) and npm
+- Node.js 22.22.1 or newer, and npm 10.x
 
 The dependency tree is captured in `package-lock.json`. Use `npm ci` rather
-than `npm install` for a reproducible checkout.
+than `npm install` for a reproducible checkout. The expected package-manager
+version is recorded in `package.json` as `npm@10.9.4`.
 
 ## Setup
 
@@ -35,6 +36,20 @@ npm start
 The development server opens the application at
 [http://localhost:3000](http://localhost:3000).
 
+## Configuration
+
+The application uses `https://dummyjson.com/users` by default. To point a local
+or deployed build at another compatible endpoint, copy `.env.example` to
+`.env.local` and set:
+
+```sh
+REACT_APP_USERS_API_URL=https://dummyjson.com/users
+```
+
+Create React App reads this value at build time. Restart the development server
+after changing it. GitHub Pages uses the documented default unless the variable
+is supplied to the workflow.
+
 ## Verification
 
 Run the complete non-interactive local gate:
@@ -43,23 +58,36 @@ Run the complete non-interactive local gate:
 npm run verify
 ```
 
-This runs ESLint, the test suite once, and then creates a production build.
+This checks formatting, runs ESLint and the test suite once, and then creates a
+production build.
 Individual commands are also available:
 
-| Command | Purpose |
-| --- | --- |
-| `npm start` | Start the development server |
-| `npm run lint` | Check JavaScript and React source files with ESLint |
-| `npm test` | Start Jest in interactive watch mode |
-| `npm run test:ci` | Run Jest once and exit |
-| `npm run build` | Create the production build in `build/` |
-| `npm run verify` | Run lint, non-interactive tests, and production build |
+| Command                | Purpose                                             |
+| ---------------------- | --------------------------------------------------- |
+| `npm start`            | Start the development server                        |
+| `npm run format:check` | Check formatting with Prettier                      |
+| `npm run lint`         | Check JavaScript and React source files with ESLint |
+| `npm test`             | Start Jest in interactive watch mode                |
+| `npm run test:ci`      | Run Jest once and exit                              |
+| `npm run build`        | Create the production build in `build/`             |
+| `npm run verify`       | Run formatting, lint, tests, and production build   |
+
+## Commit checks
+
+`npm ci` installs a Husky pre-commit hook. Before a commit is created, the hook
+runs `npm run lint:staged`: staged JavaScript and JSX files must pass ESLint and
+Prettier, while staged CSS, HTML, JSON, Markdown, and YAML files must pass
+Prettier. The hook checks files without rewriting them.
+
+This quick local check complements the full GitHub Actions quality gate. The
+remote gate remains authoritative because Git hooks can be bypassed locally.
 
 ## Continuous integration and deployment
 
 GitHub Actions runs the quality gate for every pull request targeting `main`
-and every push to `main`. The gate installs from `package-lock.json`, runs lint
-and tests, and creates the production build. Pull requests never deploy.
+and every push to `main`. The gate installs from `package-lock.json`, checks
+formatting, runs lint and tests, and creates the production build. Pull requests
+never deploy.
 
 After the quality gate passes on a push to `main`, the same workflow uploads
 `build/` and deploys it to the `github-pages` environment. The `homepage` value
@@ -84,6 +112,7 @@ App
 ```
 
 - `src/context/UserContext.jsx` connects the data source to the UI.
+- `src/config.js` owns build-time API configuration and the search debounce.
 - `src/hooks/useFetch.js` owns request, loading, and error state.
 - `src/hooks/useDebounce.js` delays application of the search query.
 - `src/pages/UsersPage.jsx` owns filtering and page states.
@@ -91,7 +120,6 @@ App
 
 ## Current limitations
 
-- The users API URL and debounce duration are currently code constants.
 - The application has no retry control when the users request fails.
 - Browser-level tests cover the current user-visible list, search, and state
   behavior; end-to-end coverage is intentionally deferred.
