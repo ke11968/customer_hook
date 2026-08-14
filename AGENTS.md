@@ -13,6 +13,9 @@ Successful `main` builds are deployed as a static site to GitHub Pages.
 - `.agents/skills/grill_me.md` defines the feature-discovery interview.
 - `.github/workflows/ci.yml` verifies pull requests and deploys successful
   `main` builds to GitHub Pages.
+- `.husky/pre-commit` checks staged source and configuration before commits.
+- `.env.example` documents optional build-time configuration.
+- `src/config.js` owns the users API URL and search debounce duration.
 - `src/App.js` composes the provider and users page.
 - `src/context/UserContext.jsx` owns the users data source.
 - `src/hooks/useFetch.js` manages request, loading, and error state.
@@ -22,7 +25,7 @@ Successful `main` builds are deployed as a static site to GitHub Pages.
 
 ## Setup and verification
 
-Install exactly from the lockfile:
+Use Node.js 22.22.1 or newer and npm 10.x. Install exactly from the lockfile:
 
 ```sh
 npm ci
@@ -35,14 +38,18 @@ runs lint, tests, and a production build:
 npm run verify
 ```
 
+Husky runs `npm run lint:staged` before commits. This fast local guard does not
+replace the complete verification command or the remote GitHub quality gate.
+
 For local development, run `npm start`. Do not run `npm run eject`.
 
 ## Product contract
 
-- The app loads users from `https://dummyjson.com/users`.
+- The app loads users from `REACT_APP_USERS_API_URL` when configured and falls
+  back to `https://dummyjson.com/users`.
 - An empty search displays all loaded users.
 - Search is case-insensitive and matches the combined first and last name.
-- Search input is debounced by 500 milliseconds.
+- Search input is debounced by the 500 millisecond named configuration value.
 - Loading, request error, empty response, no-match, and result states must remain
   distinguishable.
 - A user card displays the image, full name, age, email, and phone number.
@@ -51,16 +58,16 @@ For local development, run `npm start`. Do not run `npm run eject`.
 
 Track every planned change in `feature_list.json`. Use the following lifecycle:
 
-| Status | Meaning |
-| --- | --- |
-| `proposed` | The idea exists but has not been clarified. |
-| `questioning` | The `grill-me` interview is resolving requirements. |
-| `ready` | Scope and acceptance criteria have explicit human approval. |
-| `in_progress` | Approved implementation work has started. |
-| `blocked` | Progress requires a named decision or external dependency. |
-| `in_review` | Implementation or harness changes await human review. |
-| `done` | Acceptance criteria and verification pass with human approval. |
-| `deferred` | Work is intentionally postponed with a recorded reason. |
+| Status        | Meaning                                                        |
+| ------------- | -------------------------------------------------------------- |
+| `proposed`    | The idea exists but has not been clarified.                    |
+| `questioning` | The `grill-me` interview is resolving requirements.            |
+| `ready`       | Scope and acceptance criteria have explicit human approval.    |
+| `in_progress` | Approved implementation work has started.                      |
+| `blocked`     | Progress requires a named decision or external dependency.     |
+| `in_review`   | Implementation or harness changes await human review.          |
+| `done`        | Acceptance criteria and verification pass with human approval. |
+| `deferred`    | Work is intentionally postponed with a recorded reason.        |
 
 For a new feature:
 

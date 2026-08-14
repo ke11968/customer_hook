@@ -50,15 +50,21 @@ test('loads all users and renders the complete user-card contract', async () => 
 
   render(<App />);
 
-  expect(screen.getByRole('heading', { name: 'Users List' })).toBeInTheDocument();
+  expect(
+    screen.getByRole('heading', { name: 'Users List' }),
+  ).toBeInTheDocument();
   expect(screen.getByText('Loading...')).toBeInTheDocument();
 
-  expect(await screen.findByRole('heading', { name: 'Ada Lovelace' })).toBeInTheDocument();
-  expect(screen.getByRole('heading', { name: 'Grace Hopper' })).toBeInTheDocument();
+  expect(
+    await screen.findByRole('heading', { name: 'Ada Lovelace' }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole('heading', { name: 'Grace Hopper' }),
+  ).toBeInTheDocument();
   expect(screen.queryByText('Loading...')).not.toBeInTheDocument();
   expect(screen.getByRole('img', { name: 'Ada' })).toHaveAttribute(
     'src',
-    'https://example.com/ada.png'
+    'https://example.com/ada.png',
   );
   expect(screen.getByText('Age: 36')).toBeInTheDocument();
   expect(screen.getByText('Email: ada@example.com')).toBeInTheDocument();

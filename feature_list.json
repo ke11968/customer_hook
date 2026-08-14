@@ -47,10 +47,7 @@
           "id": "repository-guide",
           "status": "done",
           "summary": "Document the product, source map, commands, behavior contract, change rules, and definition of done.",
-          "evidence": [
-            "AGENTS.md",
-            "README.md"
-          ]
+          "evidence": ["AGENTS.md", "README.md"]
         },
         {
           "id": "headless-verification",
@@ -66,25 +63,19 @@
           "id": "feature-registry",
           "status": "done",
           "summary": "Create the machine-readable feature and checkpoint registry.",
-          "evidence": [
-            "feature_list.json"
-          ]
+          "evidence": ["feature_list.json"]
         },
         {
           "id": "feature-interview",
           "status": "done",
           "summary": "Create a reusable interview workflow for clarifying features before implementation.",
-          "evidence": [
-            ".agents/skills/grill_me.md"
-          ]
+          "evidence": [".agents/skills/grill_me.md"]
         },
         {
           "id": "human-review-gate",
           "status": "done",
           "summary": "Require explicit human review after changes and before any commit, push, or pull request.",
-          "evidence": [
-            "AGENTS.md#change-rules"
-          ]
+          "evidence": ["AGENTS.md#change-rules"]
         }
       ],
       "open_questions": [],
@@ -94,15 +85,10 @@
       ],
       "dependencies": [],
       "verification": {
-        "commands": [
-          "npm run verify"
-        ],
+        "commands": ["npm run verify"],
         "last_result": "passed",
         "last_run_at": "2026-08-14",
-        "evidence": [
-          "1 test passed",
-          "Production build compiled successfully"
-        ]
+        "evidence": ["1 test passed", "Production build compiled successfully"]
       },
       "human_review": {
         "status": "approved",
@@ -189,9 +175,7 @@
         "Timer-based assertions can become flaky unless debounce time is controlled with fake timers.",
         "Component-level browser tests do not replace a future end-to-end test against a deployed application."
       ],
-      "dependencies": [
-        "ai-harness-foundation"
-      ],
+      "dependencies": ["ai-harness-foundation"],
       "verification": {
         "commands": [
           "npm run test:ci",
@@ -278,9 +262,7 @@
           "id": "merge-gate-handoff",
           "status": "done",
           "summary": "Document how to make the successful GitHub Actions check required for merging.",
-          "evidence": [
-            "README.md#continuous-integration-and-deployment"
-          ]
+          "evidence": ["README.md#continuous-integration-and-deployment"]
         },
         {
           "id": "github-pages-deployment",
@@ -301,10 +283,7 @@
         "GitHub Pages must be enabled with GitHub Actions as its source before the first deployment can succeed.",
         "Create React App supplies ESLint through react-scripts, so the lint command must stay compatible with that existing toolchain."
       ],
-      "dependencies": [
-        "ai-harness-foundation",
-        "behavioral-test-baseline"
-      ],
+      "dependencies": ["ai-harness-foundation", "behavioral-test-baseline"],
       "verification": {
         "commands": [
           "npm ci",
@@ -340,6 +319,250 @@
         "reviewed_by": "repository owner",
         "reviewed_at": "2026-08-14",
         "notes": "The CI/CD implementation and npm 10 lockfile repair were reviewed before merge. The repository owner approved marking the feature done after the remote main quality gate and GitHub Pages deployment passed."
+      }
+    },
+    {
+      "id": "product-config-hygiene",
+      "title": "Product metadata and configuration hygiene",
+      "status": "done",
+      "priority": "high",
+      "size": "medium",
+      "summary": "Replace template metadata, centralize build-time configuration, remove unused CRA starter files, and make the current toolchain more reproducible without migrating away from Create React App.",
+      "scope": {
+        "in": [
+          "Customer Hook title, description, and web-app manifest metadata",
+          "Documented REACT_APP_USERS_API_URL configuration with a safe DummyJSON default",
+          "Named search debounce constant",
+          "Removal of reportWebVitals, web-vitals, and unused CRA logo source",
+          "Separation of browser runtime and development-only dependencies",
+          "Node.js and npm version metadata",
+          "Prettier format-check command in local verification and CI",
+          "Husky and lint-staged pre-commit checks for staged source and configuration"
+        ],
+        "out": [
+          "Vite migration",
+          "User-visible behavior changes",
+          "UI redesign",
+          "Backend or API implementation",
+          "Retry controls or new product features"
+        ]
+      },
+      "acceptance_criteria": [
+        "Browser title, description, and installable-app manifest identify Customer Hook rather than React App or Create React App Sample.",
+        "The users endpoint reads REACT_APP_USERS_API_URL at build time and safely defaults to https://dummyjson.com/users.",
+        "The 500 millisecond search debounce is referenced through a named configuration constant.",
+        "reportWebVitals.js, logo.svg, and the direct web-vitals dependency are removed without changing application behavior.",
+        "Only React browser runtime packages remain in dependencies; build and test packages are in devDependencies.",
+        "package.json records Node.js >=22.22.1, npm 10.x, and npm@10.9.4, while CI uses Node.js 22.22.1.",
+        "npm run format:check is documented and enforced by npm run verify and the GitHub Quality gate.",
+        "npm ci prepares a Husky pre-commit hook that runs non-mutating ESLint and Prettier checks only against applicable staged files.",
+        "All five existing behavioral tests pass and the production build retains repository-relative asset paths."
+      ],
+      "scope_approval": {
+        "status": "approved",
+        "approved_by": "repository owner",
+        "approved_at": "2026-08-14",
+        "notes": "The repository owner explicitly selected this bounded hygiene work and asked for implementation on a dedicated branch while deferring Vite."
+      },
+      "checkpoints": [
+        {
+          "id": "product-metadata",
+          "status": "done",
+          "summary": "Replace Create React App placeholder metadata with Customer Hook product metadata.",
+          "evidence": [
+            "public/index.html title and description identify Customer Hook",
+            "public/manifest.json names the Customer Hook User Directory",
+            "The production build contains the Customer Hook title and description"
+          ]
+        },
+        {
+          "id": "runtime-configuration",
+          "status": "done",
+          "summary": "Centralize the configurable users API URL and named search debounce duration.",
+          "evidence": [
+            "src/config.js exports the safe API resolver, default URL, and SEARCH_DEBOUNCE_MS",
+            "src/context/UserContext.jsx consumes USERS_API_URL",
+            "src/pages/UsersPage.jsx consumes SEARCH_DEBOUNCE_MS",
+            ".env.example and README.md document REACT_APP_USERS_API_URL",
+            "src/config.test.js covers missing, blank, normalized, and debounce configuration"
+          ]
+        },
+        {
+          "id": "cra-cleanup",
+          "status": "done",
+          "summary": "Remove unused CRA performance and logo starter artifacts.",
+          "evidence": [
+            "src/reportWebVitals.js removed",
+            "src/logo.svg removed",
+            "web-vitals removed from package.json and package-lock.json",
+            "src/index.js no longer initializes unused performance reporting"
+          ]
+        },
+        {
+          "id": "dependency-classification",
+          "status": "done",
+          "summary": "Separate runtime dependencies from build and test tooling and record supported tool versions.",
+          "evidence": [
+            "package.json dependencies contains only react and react-dom",
+            "Testing libraries and react-scripts are classified as devDependencies",
+            "package.json records Node.js >=22.22.1, npm 10.x, and npm@10.9.4",
+            "npm ls --omit=dev --depth=0 lists only react and react-dom"
+          ]
+        },
+        {
+          "id": "format-gate",
+          "status": "done",
+          "summary": "Add a reproducible Prettier check to local verification and GitHub Actions.",
+          "evidence": [
+            "package.json#scripts.format:check",
+            "package.json#scripts.verify runs format:check first",
+            ".github/workflows/ci.yml runs Check formatting after npm ci",
+            ".prettierrc.json preserves the repository's single-quote JavaScript style",
+            ".prettierignore excludes generated and dependency directories"
+          ]
+        },
+        {
+          "id": "pre-commit-gate",
+          "status": "done",
+          "summary": "Reject commits whose staged source or configuration fails ESLint or Prettier.",
+          "evidence": [
+            ".husky/pre-commit invokes npm run lint:staged",
+            "package.json#scripts.prepare installs the shared hook during npm ci",
+            "package.json#lint-staged runs ESLint and Prettier checks without rewriting files",
+            "The installed hook passed against staged JavaScript, JSON, and Markdown files",
+            "README.md documents the local hook and the authoritative remote Quality gate"
+          ]
+        }
+      ],
+      "open_questions": [],
+      "risks": [
+        "Create React App injects REACT_APP_ variables only at build time, so runtime changes require rebuilding the application.",
+        "Moving build tools to devDependencies requires production builders to install development dependencies.",
+        "A broad initial formatting pass could obscure functional changes, so formatting should remain limited to the repository's maintained source and configuration files.",
+        "Local Git hooks can be bypassed, so GitHub Actions remains the authoritative merge gate."
+      ],
+      "dependencies": ["behavioral-test-baseline", "github-ci-gate"],
+      "verification": {
+        "commands": [
+          "npx --yes npm@10.9.4 ci",
+          "npm run format:check",
+          "npm run lint",
+          "npm run lint:staged",
+          "npm run test:ci",
+          "npm run build",
+          "CI=true npm run verify",
+          "rg 'src=\"./static|href=\"./static' build/index.html"
+        ],
+        "last_result": "passed",
+        "last_run_at": "2026-08-14",
+        "evidence": [
+          "A clean npm 10.9.4 install completed from package-lock.json",
+          "Prettier reported that all matched files use the configured style",
+          "ESLint completed with zero warnings and errors",
+          "The Husky pre-commit hook ran lint-staged successfully against representative staged files",
+          "3 test suites and 7 tests passed, including the original 5 behavioral tests",
+          "The production build compiled successfully with repository-relative JavaScript and CSS asset paths",
+          "The built index contains the Customer Hook title and description",
+          "JSON metadata and GitHub Actions YAML parsed successfully"
+        ]
+      },
+      "human_review": {
+        "status": "approved",
+        "reviewed_by": "repository owner",
+        "reviewed_at": "2026-08-14",
+        "notes": "The repository owner reviewed the product/config hygiene, dependency cleanup, formatting gate, and pre-commit hook and explicitly approved creating the commits."
+      }
+    },
+    {
+      "id": "vite-toolchain-migration",
+      "title": "Migrate from Create React App to Vite",
+      "status": "deferred",
+      "priority": "medium",
+      "size": "large",
+      "summary": "Replace the Create React App toolchain with Vite in a dedicated future change while preserving the verified user-list behavior and GitHub Pages delivery path.",
+      "scope": {
+        "in": [
+          "Replace react-scripts development and production build commands with Vite",
+          "Preserve equivalent lint and non-interactive test commands",
+          "Keep all five existing behavioral tests passing or migrate them to an equivalent supported runner",
+          "Update GitHub Actions and GitHub Pages artifact handling from build/ to dist/",
+          "Remove Create React App-only entry points, dependencies, and generated assumptions",
+          "Preserve relative asset paths for the customer_hook repository Pages URL"
+        ],
+        "out": [
+          "User-visible product behavior changes",
+          "UI redesign",
+          "Backend, authentication, or database work",
+          "New deployment targets",
+          "Unrelated feature development"
+        ]
+      },
+      "acceptance_criteria": [
+        "A clean lockfile installation supports local development, lint, tests, and a production Vite build.",
+        "The existing five behavioral tests continue to protect loading, results, errors, empty responses, search debounce, and no-match behavior.",
+        "The pull-request Quality gate passes with the migrated toolchain.",
+        "A successful push to main uploads dist/ and deploys the application to GitHub Pages.",
+        "The deployed customer_hook site loads its JavaScript, CSS, manifest, and public assets from valid repository-relative paths.",
+        "react-scripts and obsolete Create React App-only files and dependencies are removed."
+      ],
+      "checkpoints": [
+        {
+          "id": "migration-brief",
+          "status": "deferred",
+          "summary": "Confirm the Vite, test-runner, asset-path, and environment-variable migration design before implementation.",
+          "evidence": [
+            "Deferred by the repository owner on 2026-08-14 because this is a large cross-cutting toolchain change"
+          ]
+        },
+        {
+          "id": "toolchain-replacement",
+          "status": "deferred",
+          "summary": "Replace react-scripts and CRA entry points while preserving local development and production builds.",
+          "evidence": []
+        },
+        {
+          "id": "test-and-ci-parity",
+          "status": "deferred",
+          "summary": "Preserve behavioral tests and update the Quality gate for the selected Vite-compatible test setup.",
+          "evidence": []
+        },
+        {
+          "id": "pages-migration",
+          "status": "deferred",
+          "summary": "Deploy the Vite dist/ artifact to GitHub Pages without breaking repository-relative asset paths.",
+          "evidence": []
+        }
+      ],
+      "open_questions": [
+        "Whether to migrate the existing Jest tests to Vitest or preserve Jest as a separate runner.",
+        "Whether future API configuration should use a required VITE_USERS_API_URL value or a documented DummyJSON default."
+      ],
+      "risks": [
+        "The migration changes development, testing, production build, CI artifact, and deployment behavior at the same time.",
+        "Incorrect Vite base configuration can produce a successful build whose assets fail under the GitHub Pages repository path.",
+        "Changing the test runner can weaken behavioral coverage if assertions or browser-environment setup are lost during conversion.",
+        "Combining this migration with product changes would make regressions harder to isolate within the two-day assignment window."
+      ],
+      "dependencies": ["behavioral-test-baseline", "github-ci-gate"],
+      "deferral": {
+        "reason": "This is a large cross-cutting infrastructure change that affects local development, tests, production builds, CI, GitHub Pages artifacts, asset paths, and environment-variable conventions. It is intentionally outside the two-day assignment scope; the behavioral baseline and CI/CD pipeline now provide a safe foundation for a separate future migration.",
+        "decided_by": "repository owner",
+        "decided_at": "2026-08-14",
+        "revisit_when": "After the current repository-readiness improvements are submitted and a dedicated migration scope is approved."
+      },
+      "verification": {
+        "commands": [],
+        "last_result": "not_run_deferred",
+        "last_run_at": null,
+        "evidence": [
+          "No migration code was implemented as part of the deferral decision."
+        ]
+      },
+      "human_review": {
+        "status": "approved",
+        "reviewed_by": "repository owner",
+        "reviewed_at": "2026-08-14",
+        "notes": "The repository owner explicitly chose to defer the Vite migration because its cross-cutting scope is too large for the current assignment window."
       }
     }
   ]
