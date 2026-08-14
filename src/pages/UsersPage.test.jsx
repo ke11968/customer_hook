@@ -27,7 +27,7 @@ const renderUsersPage = () =>
   render(
     <UserContext.Provider value={{ users, loading: false, error: '' }}>
       <UsersPage />
-    </UserContext.Provider>
+    </UserContext.Provider>,
   );
 
 afterEach(() => {
@@ -38,32 +38,46 @@ test('filters by a case-insensitive full name only after the debounce', () => {
   jest.useFakeTimers();
   renderUsersPage();
 
-  fireEvent.change(screen.getByPlaceholderText('Search by first or last name'), {
-    target: { value: 'ADA LOVE' },
-  });
+  fireEvent.change(
+    screen.getByPlaceholderText('Search by first or last name'),
+    {
+      target: { value: 'ADA LOVE' },
+    },
+  );
 
   act(() => {
     jest.advanceTimersByTime(499);
   });
 
-  expect(screen.getByRole('heading', { name: 'Ada Lovelace' })).toBeInTheDocument();
-  expect(screen.getByRole('heading', { name: 'Grace Hopper' })).toBeInTheDocument();
+  expect(
+    screen.getByRole('heading', { name: 'Ada Lovelace' }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole('heading', { name: 'Grace Hopper' }),
+  ).toBeInTheDocument();
 
   act(() => {
     jest.advanceTimersByTime(1);
   });
 
-  expect(screen.getByRole('heading', { name: 'Ada Lovelace' })).toBeInTheDocument();
-  expect(screen.queryByRole('heading', { name: 'Grace Hopper' })).not.toBeInTheDocument();
+  expect(
+    screen.getByRole('heading', { name: 'Ada Lovelace' }),
+  ).toBeInTheDocument();
+  expect(
+    screen.queryByRole('heading', { name: 'Grace Hopper' }),
+  ).not.toBeInTheDocument();
 });
 
 test('shows the no-match state after a debounced search', () => {
   jest.useFakeTimers();
   renderUsersPage();
 
-  fireEvent.change(screen.getByPlaceholderText('Search by first or last name'), {
-    target: { value: 'missing person' },
-  });
+  fireEvent.change(
+    screen.getByPlaceholderText('Search by first or last name'),
+    {
+      target: { value: 'missing person' },
+    },
+  );
 
   act(() => {
     jest.advanceTimersByTime(500);
