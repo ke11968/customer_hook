@@ -5,7 +5,8 @@ Customer Hook is a small React application that fetches a user list from
 name in the browser.
 
 The repository contains only the frontend. It does not include a backend,
-authentication, a database, or deployment configuration.
+authentication, or a database. Successful builds from `main` are deployed as a
+static site to GitHub Pages.
 
 ## Behavior
 
@@ -19,7 +20,7 @@ authentication, a database, or deployment configuration.
 
 ## Requirements
 
-- Node.js and npm
+- Node.js 22 (the version used by CI) and npm
 
 The dependency tree is captured in `package-lock.json`. Use `npm ci` rather
 than `npm install` for a reproducible checkout.
@@ -42,16 +43,36 @@ Run the complete non-interactive local gate:
 npm run verify
 ```
 
-This runs the test suite once and then creates a production build. Individual
-commands are also available:
+This runs ESLint, the test suite once, and then creates a production build.
+Individual commands are also available:
 
 | Command | Purpose |
 | --- | --- |
 | `npm start` | Start the development server |
+| `npm run lint` | Check JavaScript and React source files with ESLint |
 | `npm test` | Start Jest in interactive watch mode |
 | `npm run test:ci` | Run Jest once and exit |
 | `npm run build` | Create the production build in `build/` |
-| `npm run verify` | Run the non-interactive tests and production build |
+| `npm run verify` | Run lint, non-interactive tests, and production build |
+
+## Continuous integration and deployment
+
+GitHub Actions runs the quality gate for every pull request targeting `main`
+and every push to `main`. The gate installs from `package-lock.json`, runs lint
+and tests, and creates the production build. Pull requests never deploy.
+
+After the quality gate passes on a push to `main`, the same workflow uploads
+`build/` and deploys it to the `github-pages` environment. The `homepage` value
+in `package.json` keeps generated asset paths relative so the build works at a
+repository Pages URL and remains portable across forks.
+
+Before the first deployment, a repository administrator must open **Settings →
+Pages** and select **GitHub Actions** as the build source. To prevent broken
+changes from being merged, add a ruleset for `main` under **Settings → Rules**
+and require the **Quality gate** status check.
+
+For this repository, the expected project-site URL is:
+`https://anastasiakrivova-stack.github.io/customer_hook/`.
 
 ## Architecture
 
@@ -72,8 +93,8 @@ App
 
 - The users API URL and debounce duration are currently code constants.
 - The application has no retry control when the users request fails.
-- Test coverage is currently limited and is being expanded around user-visible
-  behavior.
+- Browser-level tests cover the current user-visible list, search, and state
+  behavior; end-to-end coverage is intentionally deferred.
 - Create React App remains the build tool and should be migrated separately,
   behind passing behavior tests.
 

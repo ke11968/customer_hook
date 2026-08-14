@@ -213,6 +213,125 @@
         "reviewed_at": "2026-08-14",
         "notes": "The behavioral test baseline and reproducible coverage evidence were reviewed and approved before commit."
       }
+    },
+    {
+      "id": "github-ci-gate",
+      "title": "GitHub CI/CD and Pages deployment",
+      "status": "in_review",
+      "priority": "critical",
+      "summary": "Run reproducible lint, test, and production-build checks for pull requests and automatically deploy successful main builds to GitHub Pages.",
+      "scope": {
+        "in": [
+          "GitHub Actions workflow for pull requests and pushes to main",
+          "Lockfile-based dependency installation",
+          "Dedicated React ESLint command",
+          "Non-interactive behavioral tests",
+          "Production build verification",
+          "Portable Create React App asset paths for a repository Pages URL",
+          "Automatic GitHub Pages deployment after a successful push to main",
+          "Documentation for required checks and the manual branch-ruleset step"
+        ],
+        "out": [
+          "Deployment to hosting providers other than GitHub Pages",
+          "Stored deployment credentials or production secrets",
+          "Self-hosted runner infrastructure",
+          "Create React App migration"
+        ]
+      },
+      "acceptance_criteria": [
+        "A pull request targeting main automatically runs lint, tests, and a production build on a GitHub-hosted runner.",
+        "A push to main runs the same verification workflow.",
+        "CI installs dependencies with npm ci and does not make live DummyJSON requests during tests.",
+        "The lint command reports React and JavaScript lint failures non-interactively.",
+        "The production build uses asset paths that work under the customer_hook GitHub Pages repository path.",
+        "A successful push to main uploads the production build and deploys it to the github-pages environment.",
+        "The workflow uses least-privilege permissions and does not expose deployment secrets to pull requests.",
+        "Repository documentation explains the CI commands, one-time Pages setup, deployment behavior, and the GitHub ruleset setting required to block merging when CI fails."
+      ],
+      "scope_approval": {
+        "status": "approved",
+        "approved_by": "repository owner",
+        "approved_at": "2026-08-14",
+        "notes": "The repository owner selected GitHub Pages and approved pull-request verification plus automatic deployment after successful pushes to main."
+      },
+      "checkpoints": [
+        {
+          "id": "lint-command",
+          "status": "done",
+          "summary": "Expose and document the ESLint configuration already supplied by Create React App.",
+          "evidence": [
+            "package.json#scripts.lint",
+            "npm run lint passed after a clean npm ci on 2026-08-14"
+          ]
+        },
+        {
+          "id": "pull-request-workflow",
+          "status": "done",
+          "summary": "Run npm ci, lint, tests, and build for pull requests and pushes to main.",
+          "evidence": [
+            ".github/workflows/ci.yml#jobs.quality",
+            "npm run verify passed after a clean npm ci on 2026-08-14"
+          ]
+        },
+        {
+          "id": "merge-gate-handoff",
+          "status": "done",
+          "summary": "Document how to make the successful GitHub Actions check required for merging.",
+          "evidence": [
+            "README.md#continuous-integration-and-deployment"
+          ]
+        },
+        {
+          "id": "github-pages-deployment",
+          "status": "in_review",
+          "summary": "Upload the production build and deploy it to GitHub Pages only after the main quality gate succeeds.",
+          "evidence": [
+            ".github/workflows/ci.yml#jobs.deploy",
+            "package.json#homepage",
+            "Production build generated relative asset paths under ./",
+            "Remote deployment awaits Pages enablement and the first push to main"
+          ]
+        }
+      ],
+      "open_questions": [],
+      "risks": [
+        "A workflow result does not block merging until the repository owner enables a required status check in a GitHub ruleset.",
+        "GitHub Pages must be enabled with GitHub Actions as its source before the first deployment can succeed.",
+        "Create React App supplies ESLint through react-scripts, so the lint command must stay compatible with that existing toolchain."
+      ],
+      "dependencies": [
+        "ai-harness-foundation",
+        "behavioral-test-baseline"
+      ],
+      "verification": {
+        "commands": [
+          "npm ci",
+          "npm run lint",
+          "npm run test:ci",
+          "npm run build",
+          "npm run verify",
+          "CI=true npm run verify",
+          "ruby -e 'require \"yaml\"; YAML.load_file(\".github/workflows/ci.yml\")'",
+          "rg 'src=\"./static|href=\"./static' build/index.html"
+        ],
+        "last_result": "passed_locally",
+        "last_run_at": "2026-08-14",
+        "evidence": [
+          "npm ci completed successfully from package-lock.json",
+          "ESLint completed with zero warnings and errors",
+          "2 test suites and 5 tests passed",
+          "Production build compiled successfully for the ./ public path",
+          "The complete verification gate also passed with CI=true",
+          "Workflow YAML parsed successfully with quality and deploy jobs",
+          "Remote GitHub Actions and Pages execution is pending the first push"
+        ]
+      },
+      "human_review": {
+        "status": "approved",
+        "reviewed_by": "repository owner",
+        "reviewed_at": "2026-08-14",
+        "notes": "The CI/CD implementation was reviewed and approved before commit. The feature remains in_review until the remote quality gate and GitHub Pages deployment pass."
+      }
     }
   ]
 }

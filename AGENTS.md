@@ -4,13 +4,15 @@
 
 Customer Hook is a small React application that loads users from DummyJSON and
 lets a visitor filter them by first or last name. The repository contains only
-the browser application; there is no backend, authentication, database, or
-deployment target in scope.
+the browser application; there is no backend, authentication, or database.
+Successful `main` builds are deployed as a static site to GitHub Pages.
 
 ## Source map
 
 - `feature_list.json` is the source of truth for feature state and checkpoints.
 - `.agents/skills/grill_me.md` defines the feature-discovery interview.
+- `.github/workflows/ci.yml` verifies pull requests and deploys successful
+  `main` builds to GitHub Pages.
 - `src/App.js` composes the provider and users page.
 - `src/context/UserContext.jsx` owns the users data source.
 - `src/hooks/useFetch.js` manages request, loading, and error state.
@@ -26,7 +28,8 @@ Install exactly from the lockfile:
 npm ci
 ```
 
-Use the non-interactive verification command before handing off a change:
+Use the non-interactive verification command before handing off a change. It
+runs lint, tests, and a production build:
 
 ```sh
 npm run verify
@@ -90,8 +93,8 @@ write unknown decisions in `open_questions` rather than inventing an answer.
 - Add or update behavior-focused tests whenever the product contract changes.
 - Update `README.md` and this file when commands, configuration, architecture,
   or supported behavior changes.
-- Do not add a backend, deployment workflow, or production dependency without
-  an explicit requirement.
+- Do not add a backend, another deployment target, or a production dependency
+  without an explicit requirement.
 - Keep `package-lock.json` synchronized with intentional `package.json`
   changes; do not regenerate it for unrelated edits.
 
@@ -112,3 +115,5 @@ write unknown decisions in `open_questions` rather than inventing an answer.
   an explicit product decision.
 - Flag configuration reads that are not documented or do not have a safe
   default or clear validation error.
+- Flag workflows that grant write permissions outside the deployment job or
+  expose deployment credentials to pull-request code.
