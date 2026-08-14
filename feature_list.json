@@ -110,6 +110,109 @@
         "reviewed_at": "2026-08-14",
         "notes": "The complete AI harness was reviewed and approved before commit."
       }
+    },
+    {
+      "id": "behavioral-test-baseline",
+      "title": "Behavioral test baseline",
+      "status": "done",
+      "priority": "high",
+      "summary": "Protect the current user-list contract with deterministic browser tests that never call the live DummyJSON API.",
+      "scope": {
+        "in": [
+          "Loading, successful response, request error, and empty response states",
+          "Required user-card fields",
+          "Case-insensitive full-name search after the 500 millisecond debounce",
+          "No-match search state",
+          "Mocked network responses for deterministic tests"
+        ],
+        "out": [
+          "Application behavior changes",
+          "End-to-end browser infrastructure",
+          "Live DummyJSON integration tests",
+          "Coverage threshold enforcement",
+          "CI/CD configuration"
+        ]
+      },
+      "acceptance_criteria": [
+        "Tests distinguish loading, result, request error, empty response, and no-match states.",
+        "Tests verify that a result card displays image, full name, age, email, and phone.",
+        "Tests verify that search is case-insensitive, matches the combined first and last name, and waits for the 500 millisecond debounce.",
+        "Every fetch used by the test suite is mocked and no test calls DummyJSON.",
+        "npm run verify passes."
+      ],
+      "scope_approval": {
+        "status": "approved",
+        "approved_by": "repository owner",
+        "approved_at": "2026-08-14",
+        "notes": "The repository owner explicitly approved implementation and waived the grill-me interview because this feature codifies the existing product contract in tests."
+      },
+      "checkpoints": [
+        {
+          "id": "data-states",
+          "status": "done",
+          "summary": "Cover loading, successful response, request error, and empty response states.",
+          "evidence": [
+            "src/App.test.js: loads all users and renders the complete user-card contract",
+            "src/App.test.js: shows the request error state for an unsuccessful response",
+            "src/App.test.js: shows the empty state when the API returns no users"
+          ]
+        },
+        {
+          "id": "card-contract",
+          "status": "done",
+          "summary": "Assert every required user-card field.",
+          "evidence": [
+            "src/App.test.js: loads all users and renders the complete user-card contract"
+          ]
+        },
+        {
+          "id": "search-contract",
+          "status": "done",
+          "summary": "Cover debounced, case-insensitive full-name matching and the no-match state.",
+          "evidence": [
+            "src/pages/UsersPage.test.jsx: filters by a case-insensitive full name only after the debounce",
+            "src/pages/UsersPage.test.jsx: shows the no-match state after a debounced search"
+          ]
+        },
+        {
+          "id": "deterministic-network",
+          "status": "done",
+          "summary": "Replace live network behavior with controlled fetch responses in every test.",
+          "evidence": [
+            "src/App.test.js mocks global.fetch before every App render",
+            "src/pages/UsersPage.test.jsx supplies a controlled UserContext and makes no network request"
+          ]
+        }
+      ],
+      "open_questions": [],
+      "risks": [
+        "Timer-based assertions can become flaky unless debounce time is controlled with fake timers.",
+        "Component-level browser tests do not replace a future end-to-end test against a deployed application."
+      ],
+      "dependencies": [
+        "ai-harness-foundation"
+      ],
+      "verification": {
+        "commands": [
+          "npm run test:ci",
+          "npm run test:ci -- --coverage --coverageReporters=text",
+          "npm run verify"
+        ],
+        "last_result": "passed",
+        "last_run_at": "2026-08-14",
+        "evidence": [
+          "2 test suites and 5 tests passed",
+          "Behavioral source files have 100% statement and line coverage",
+          "Overall coverage: 82.81% statements, 77.77% branches, 88.23% functions, 82.53% lines",
+          "Production build compiled successfully"
+        ]
+      },
+      "human_review": {
+        "status": "approved",
+        "reviewed_by": "repository owner",
+        "reviewed_at": "2026-08-14",
+        "notes": "The behavioral test baseline and reproducible coverage evidence were reviewed and approved before commit."
+      }
     }
   ]
 }
