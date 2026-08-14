@@ -270,7 +270,8 @@
           "summary": "Run npm ci, lint, tests, and build for pull requests and pushes to main.",
           "evidence": [
             ".github/workflows/ci.yml#jobs.quality",
-            "npm run verify passed after a clean npm ci on 2026-08-14"
+            "npm run verify passed after a clean npm ci on 2026-08-14",
+            "npm 10.9.4 clean install passed after repairing the missing yaml@2.9.0 lockfile entry"
           ]
         },
         {
@@ -306,6 +307,7 @@
       "verification": {
         "commands": [
           "npm ci",
+          "npx --yes npm@10.9.4 ci",
           "npm run lint",
           "npm run test:ci",
           "npm run build",
@@ -318,6 +320,7 @@
         "last_run_at": "2026-08-14",
         "evidence": [
           "npm ci completed successfully from package-lock.json",
+          "npm 10.9.4 reproduced the runner install path successfully after the lockfile repair",
           "ESLint completed with zero warnings and errors",
           "2 test suites and 5 tests passed",
           "Production build compiled successfully for the ./ public path",
@@ -330,7 +333,7 @@
         "status": "approved",
         "reviewed_by": "repository owner",
         "reviewed_at": "2026-08-14",
-        "notes": "The CI/CD implementation was reviewed and approved before commit. The feature remains in_review until the remote quality gate and GitHub Pages deployment pass."
+        "notes": "The CI/CD implementation and npm 10 lockfile repair were reviewed and approved before commit. The feature remains in_review until the remote quality gate and GitHub Pages deployment pass."
       }
     }
   ]
