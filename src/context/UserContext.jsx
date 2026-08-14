@@ -1,10 +1,11 @@
 import { createContext } from 'react';
+import { USERS_API_URL } from '../config';
 import useFetch from '../hooks/useFetch';
 
 export const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
-  const { data, loading, error } = useFetch('https://dummyjson.com/users');
+  const { data, loading, error } = useFetch(USERS_API_URL);
 
   const users = data?.users || [];
 
