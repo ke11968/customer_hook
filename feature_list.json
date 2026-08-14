@@ -217,7 +217,7 @@
     {
       "id": "github-ci-gate",
       "title": "GitHub CI/CD and Pages deployment",
-      "status": "in_review",
+      "status": "done",
       "priority": "critical",
       "summary": "Run reproducible lint, test, and production-build checks for pull requests and automatically deploy successful main builds to GitHub Pages.",
       "scope": {
@@ -284,13 +284,14 @@
         },
         {
           "id": "github-pages-deployment",
-          "status": "in_review",
+          "status": "done",
           "summary": "Upload the production build and deploy it to GitHub Pages only after the main quality gate succeeds.",
           "evidence": [
             ".github/workflows/ci.yml#jobs.deploy",
             "package.json#homepage",
             "Production build generated relative asset paths under ./",
-            "Remote deployment awaits Pages enablement and the first push to main"
+            "GitHub Actions run 31797967066 passed the Quality gate and Deploy GitHub Pages jobs on main",
+            "https://ke11968.github.io/customer_hook/ returned HTTP 200 after deployment"
           ]
         }
       ],
@@ -314,9 +315,10 @@
           "npm run verify",
           "CI=true npm run verify",
           "ruby -e 'require \"yaml\"; YAML.load_file(\".github/workflows/ci.yml\")'",
-          "rg 'src=\"./static|href=\"./static' build/index.html"
+          "rg 'src=\"./static|href=\"./static' build/index.html",
+          "curl -fsSIL https://ke11968.github.io/customer_hook/"
         ],
-        "last_result": "passed_locally",
+        "last_result": "passed",
         "last_run_at": "2026-08-14",
         "evidence": [
           "npm ci completed successfully from package-lock.json",
@@ -326,14 +328,18 @@
           "Production build compiled successfully for the ./ public path",
           "The complete verification gate also passed with CI=true",
           "Workflow YAML parsed successfully with quality and deploy jobs",
-          "Remote GitHub Actions and Pages execution is pending the first push"
+          "Pull request #1 was merged into main as commit 426de569b242753a86b1dad178354dd7f6409ab7",
+          "GitHub Actions run 31797967066 completed successfully on main",
+          "The Quality gate installed dependencies, linted, tested, built, and uploaded the Pages artifact successfully",
+          "The Deploy GitHub Pages job completed successfully",
+          "https://ke11968.github.io/customer_hook/ returned HTTP 200"
         ]
       },
       "human_review": {
         "status": "approved",
         "reviewed_by": "repository owner",
         "reviewed_at": "2026-08-14",
-        "notes": "The CI/CD implementation and npm 10 lockfile repair were reviewed and approved before commit. The feature remains in_review until the remote quality gate and GitHub Pages deployment pass."
+        "notes": "The CI/CD implementation and npm 10 lockfile repair were reviewed before merge. The repository owner approved marking the feature done after the remote main quality gate and GitHub Pages deployment passed."
       }
     }
   ]

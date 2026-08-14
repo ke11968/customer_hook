@@ -72,7 +72,7 @@ changes from being merged, add a ruleset for `main` under **Settings → Rules**
 and require the **Quality gate** status check.
 
 For this repository, the expected project-site URL is:
-`https://anastasiakrivova-stack.github.io/customer_hook/`.
+`https://ke11968.github.io/customer_hook/`.
 
 ## Architecture
 
